@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Management System</title>
+
+<style>
+:root {
+    --primary: #2563eb;
+    --secondary: #22c55e;
+    --danger: #ef4444;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: var(--bg);
+}
+
+header {
+    background: linear-gradient(135deg, var(--primary), #1e40af);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--primary);
+    text-align: center;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-success { background: var(--secondary); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+
+button:hover {
+    opacity: 0.9;
+}
+
+.output {
+    margin-top: 20px;
+    background: #0f172a;
+    color: #e5e7eb;
+    padding: 15px;
+    border-radius: 12px;
+    white-space: pre-wrap;
+    min-height: 200px;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    color: #64748b;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Student Management System</h1>
+    <p>Queue Based | Responsive | Professional UI</p>
+</header>
+
+<div class="container">
+
+<div class="grid">
+
+<div class="card">
+<h3>Insert Student</h3>
+<input id="iRoll" type="number" placeholder="Roll Number">
+<input id="iName" type="text" placeholder="Student Name">
+<button class="btn-success" onclick="insertStudent()">Insert</button>
+</div>
+
+<div class="card">
+<h3>Delete Student</h3>
+<input id="dRoll" type="number" placeholder="Roll Number">
+<button class="btn-danger" onclick="deleteStudent()">Delete</button>
+</div>
+
+<div class="card">
+<h3>Update Student</h3>
+<input id="uRoll" type="number" placeholder="Roll Number">
+<input id="uName" type="text" placeholder="New Name">
+<button class="btn-primary" onclick="updateStudent()">Update</button>
+</div>
+
+<div class="card">
+<h3>Search Student</h3>
+<input id="sRoll" type="number" placeholder="Roll Number">
+<button class="btn-primary" onclick="searchStudent()">Search</button>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:15px;">
+<button class="btn-primary" onclick="displayAll()">Display All Students</button>
+</div>
+
+<div class="output" id="output">System Ready...</div>
+
+</div>
+
+<footer>
+    BS Computer Science | Data Structures (Queue)
+</footer>
+
+<script>
+let students = [];
+
+const subjects = [
+    "CIVICS AND COMMUNITY ENGAGEMENT",
+    "COMPUTER ORGANISATION AND ASSEMBLY LANGUAGE",
+    "DATA STRUCTURE",
+    "SOFTWARE ENGINEERING",
+    "PROFESSIONAL PRACTICES",
+    "IT INFRASTRUCTURE"
+];
+
+function Student(roll, name) {
+    this.rollNo = roll;
+    this.name = name;
+    this.semester = 3;
+    this.subjects = subjects;
+}
+
+const names = [
+"Ahmed Raza","Hassan Ali","Usman Tariq","Ali Hamza","Bilal Ahmed",
+"Umer Farooq","Zain Abbas","Huzaifa Khan","Abdullah Noor","Ahsan Rafi",
+"Saad Yousaf","Hamza Khalid","Daniyal Shah","Faizan Akram","Ibrahim Asad",
+"Talha Junaid","Muzammil Haq","Arsalan Sheikh","Taha Rehman","Waqas Latif",
+"Maher Saqib","Shahzaib Ali","Imran Raza","Asghar Ali","Noman Qureshi",
+"Fahad Ilyas","Zeeshan Malik","Mehtab Umer","Sameer Nawaz","Yasir Ameen",
+"Adeel Hussain","Kamran Ashraf","Abdurrehman","Salman Rasheed","Ubaid Ullah"
+];
+
+// preload
+for(let i=1;i<=35;i++){
+    students.push(new Student(i, names[i-1]));
+}
+
+function insertStudent(){
+    let r = +iRoll.value;
+    let n = iName.value.trim();
+
+    if(!r || !n){
+        show("Please enter valid roll number and name.");
+        return;
+    }
+    if(students.some(s=>s.rollNo===r)){
+        show("Roll number already exists!");
+        return;
+    }
+    students.push(new Student(r,n));
+    show("Student inserted successfully.");
+}
+
+function deleteStudent(){
+    let r = +dRoll.value;
+    let found=false, temp=[];
+    while(students.length){
+        let s = students.shift();
+        if(s.rollNo===r) found=true;
+        else temp.push(s);
+    }
+    students=temp;
+    show(found?"Student deleted successfully.":"Student not found.");
+}
+
+function updateStudent(){
+    let r = +uRoll.value;
+    let n = uName.value.trim();
+    let f=false;
+
+    if(!r || !n){
+        show("Please enter valid roll number and name.");
+        return;
+    }
+
+    students.forEach(s=>{
+        if(s.rollNo===r){ s.name=n; f=true; }
+    });
+    show(f?"Student updated successfully.":"Student not found.");
+}
+
+function searchStudent(){
+    let r = +sRoll.value;
+    let s = students.find(x=>x.rollNo===r);
+    if(!s){ show("Student not found."); return; }
+
+    show(
+`Roll No: ${s.rollNo}
+Name: ${s.name}
+Semester: ${s.semester}
+Subjects:
+- ${s.subjects.join("\n- ")}`);
+}
+
+function displayAll(){
+    let t="--- ALL STUDENTS ---\n\n";
+    students.forEach(s=>{
+        t+=`Roll: ${s.rollNo}
+Name: ${s.name}
+Semester: ${s.semester}
+Subjects:
+- ${s.subjects.join("\n- ")}\n\n`;
+    });
+    show(t);
+}
+
+function show(msg){
+    output.textContent = msg;
+}
+</script>
+
+</body>
+</html>
